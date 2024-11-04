@@ -1,42 +1,76 @@
 {
-  // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "type": "npm",
-      "script": "start",
-      "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": {
-            "regexp": "(.*?)"
-          },
-          "endsPattern": {
-            "regexp": "bundle generation complete"
-          }
+    // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "start",
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "typescript",
+                "pattern": "$tsc",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": "(.*?)"
+                    },
+                    "endsPattern": {
+                        "regexp": "bundle generation complete"
+                    }
+                }
+            }
+        },
+        {
+            "type": "npm",
+            "script": "test",
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "typescript",
+                "pattern": "$tsc",
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": {
+                        "regexp": "(.*?)"
+                    },
+                    "endsPattern": {
+                        "regexp": "bundle generation complete"
+                    }
+                }
+            }
+        },
+        {
+            "label": "LUPA Task: Run",
+            "type": "process",
+            "command": "${command:lupa-studio-devicemanager.installApp}",
+            "args": [
+                "",
+                ""
+            ],
+            "dependsOn": [
+                "LUPA Task: Build and Package"
+            ]
+        },
+        {
+            "label": "LUPA Task: Configure",
+            "type": "process",
+            "command": "${command:lupa-studio.sdkmanager.configure}",
+            "dependsOn": [
+                "LUPA Task: Clean"
+            ]
+        },
+        {
+            "label": "LUPA Task: Build and Package",
+            "type": "process",
+            "command": "${command:lupa-studio.sdkmanager.build}",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "LUPA Task: Configure"
+            ]
+        },
+        {
+            "label": "LUPA Task: Clean",
+            "type": "process",
+            "command": "${command:lupa-studio.sdkmanager.clean}"
         }
-      }
-    },
-    {
-      "type": "npm",
-      "script": "test",
-      "isBackground": true,
-      "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
-        "background": {
-          "activeOnStart": true,
-          "beginsPattern": {
-            "regexp": "(.*?)"
-          },
-          "endsPattern": {
-            "regexp": "bundle generation complete"
-          }
-        }
-      }
-    }
-  ]
+    ]
 }

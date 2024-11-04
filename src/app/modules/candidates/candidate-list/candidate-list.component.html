@@ -1,0 +1,223 @@
+<div class="px-4">
+  <h1 class="text-2xl font-bold">Quản Lý Thông Tin Ứng tuyển</h1>
+  <div class="flex mt-4">
+    <div class="mt-3 md:mt-0">
+      <button id="uploadButton"
+        class="inline-block px-4 py-2 text-white duration-150 font-medium bg-indigo-600 rounded-lg hover:bg-indigo-500 active:bg-indigo-700 md:text-sm"
+        (click)="uploadCandidate()">
+        Tải lên CV
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <h2 class="text-xl font-semibold mb-2">Danh sách Ứng tuyển</h2>
+    <form [formGroup]="formGroup" class="flex mb-4">
+      <div class="pb-4 bg-white dark:bg-gray-900">
+        <label for="table-search" class="sr-only">Search</label>
+        <div class="relative mt-1">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+              fill="none" viewBox="0 0 20 20">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+            </svg>
+          </div>
+          <input type="text" [formControlName]="FORM_FIELDS.keyword"
+            class="block py-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Search for items" />
+        </div>
+      </div>
+
+      <div class="relative mt-1 ml-2">
+        <select [formControlName]="FORM_FIELDS.sortBy" id="sortBy"
+          class="w-full px-3 py-2 text-sm text-gray-600 bg-white border rounded-lg shadow-sm outline-none appearance-none focus:ring-offset-2 focus:ring-indigo-600 focus:ring-2">
+          <option value="">Mặc định</option>
+          <option value="lastModified">Ngày sửa</option>
+          <option value="full_name">Tên</option>
+          <option value="day_of_birth">Ngày sinh</option>
+          <option value="result_interview">Kết Quả</option>
+        </select>
+      </div>
+    </form>
+    <div class="shadow-sm border rounded-lg overflow-x-auto overflow-y-auto max-h-[100vh]">
+      <table class="w-full table-fixed text-sm text-left">
+        <thead class="bg-gray-50 text-gray-600 font-medium border-b sticky top-0 z-10">
+          <tr class="divide-x">
+            <th class="text-center tracking-wider px-2 py-2 bg-gray-50 sticky left-0" style="width: 80px;">Mã Số</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Họ và Tên</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Ngày Sinh</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Số Điện Thoại</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Email</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Địa Chỉ</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Giáo Dục</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Vị Trí Ứng tuyển</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Kinh Nghiệm</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Tóm Tắt</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Bộ Phận Ứng tuyển</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Vị trí Ứng tuyển</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Ngày Ứng tuyển</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Ngày Phỏng Vấn</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Kết Quả Phỏng Vấn</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Thời Gian Thử Việc</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Ngày Chính Thức</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Ghi Chú</th>
+            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Thời gian cập nhật</th>
+            <th class="text-center w-250 max-w-400 tracking-wider px-2 py-2">CV</th>
+            <th class="text-center w-250 tracking-wider px-2 py-2 sticky right-0 bg-gray-50">Hành Động</th>
+          </tr>
+        </thead>
+        <tbody [formGroup] = "formGroupItem" id="candidate-list" class="text-gray-600 divide-y">
+         
+          @if(!candidates.length){
+            <tr>
+              <td colspan="100" class="text-center py-2">
+                <div class="flex w-100 items-center">
+                  <img src="assets/images/no-data.png" style="margin-left: 15%;" class="w-32">
+                </div>
+              </td>
+            </tr>
+          }
+          @for (candidate of candidates; track candidate.id; let idx = $index, e = $even) {
+          @if(!candidateActive || candidate.id != candidateActive.id){
+          <tr class="divide-x">
+            <td class="align-top text-center sticky left-0 bg-gray-50 px-2">{{idx}}</td>
+            <td class="align-top px-2">{{candidate.full_name}}</td>
+            <td class="align-top px-2">{{candidate.day_of_birth}}</td>
+            <td class="align-top px-2">{{candidate.phone_number}}</td>
+            <td class="align-top px-2">{{candidate.email}}</td>
+            <td class="align-top px-2">{{candidate.address}}</td>
+            <td class="align-top px-2">
+              <ul class="list-disc list-inside" [innerHTML]="candidate.education"></ul>
+            </td>
+            <td class="align-top px-2">{{candidate.position_candidate}}</td>
+            <td class="align-top px-2">
+              <ul class="list-disc list-inside" [innerHTML]="candidate.experience"></ul>
+            </td>
+            <td class="align-top px-2">{{candidate.summary}}</td>
+            <td class="align-top px-2">{{candidate.department_apply}}</td>
+            <td class="align-top px-2">{{candidate.position_apply}}</td>
+            <td class="align-top px-2">{{candidate.date_apply}}</td>
+            <td class="align-top px-2">{{candidate.date_interview}}</td>
+            <td class="align-top px-2">{{candidate.result_interview}}</td>
+            <td class="align-top px-2">{{candidate.time_probation | date: 'dd/MM/yyyy'}}</td>
+            <td class="align-top px-2">{{candidate.date_official | date: 'dd/MM/yyyy'}}</td>
+            <td class="align-top px-2">{{candidate.note}}</td>
+            <td class="align-top px-2">{{candidate.lastModified | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
+            <td class="px-2 text-center"><button
+              (click)="onViewCV(candidate)"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded" id="view-cv">CV</button>
+            </td>
+            <td class=" align-top sticky right-0 bg-gray-50 px-2">
+              <div class="flex justify-center items-center gap-2 my-2">
+                <button class="px-2.5 py-2.5 text-indigo-600 duration-150 bg-indigo-50 rounded-lg hover:bg-indigo-100 active:bg-indigo-200" (click)="onUpdate(candidate)">
+                  <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="rgb(79, 70, 229)">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                  </svg>
+                </button>
+                <button class="px-2.5 py-2.5 text-indigo-600 duration-150 bg-indigo-50 rounded-lg hover:bg-indigo-100 active:bg-indigo-200" (click)="onDelete(candidate)">
+                  <svg class="h-6 w-6 text-white" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="rgb(79, 70, 229)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" />
+                    <line x1="4" y1="7" x2="20" y2="7" />
+                    <line x1="10" y1="11" x2="10" y2="17" />
+                    <line x1="14" y1="11" x2="14" y2="17" />
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @else {
+          <tr class="divide-x">
+            <td class="sticky left-0 bg-gray-50 px-2">{{idx}}</td>
+            <td class="px-2"><input type="text" [formControlName]="FORM_FIELDS.full_name"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="date" [formControlName]="FORM_FIELDS.day_of_birth" 
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="text"  [formControlName]="FORM_FIELDS.phone_number" 
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="text" [formControlName]="FORM_FIELDS.email"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><textarea
+                [formControlName]="FORM_FIELDS.address"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+            </td>
+            <td class="px-2"><textarea
+                [formControlName]="FORM_FIELDS.education"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+            </td>
+            <td class="px-2"><input type="text" [formControlName]="FORM_FIELDS.position_candidate"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><textarea
+                [formControlName]="FORM_FIELDS.experience"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+            </td>
+            <td class="px-2"><textarea
+                [formControlName]="FORM_FIELDS.summary"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+            </td>
+            <td class="px-2"><input type="text" 
+              [formControlName]="FORM_FIELDS.department_apply"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="text" [formControlName]="FORM_FIELDS.position_apply"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="date" 
+              [formControlName]="FORM_FIELDS.date_apply"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="date" 
+              [formControlName]="FORM_FIELDS.date_interview"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="text" [formControlName]="FORM_FIELDS.result_interview"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="date" [formControlName]="FORM_FIELDS.time_probation"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><input type="date" [formControlName]="FORM_FIELDS.date_official"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg">
+            </td>
+            <td class="px-2"><textarea
+                [formControlName]="FORM_FIELDS.note"
+                class="w-full px-2 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"></textarea>
+            </td>
+            <td class="align-top px-2">{{candidate.lastModified}}</td>
+            <td class="align-top px-2"></td>
+            <td class="align-top sticky right-0 bg-gray-50 px-2">
+              <div class="flex justify-center items-center gap-2 my-3">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded save-btn" (click)="onConfirmUpdate()">
+                  Save
+                </button>
+                <button class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded cancel-btn" (click)="onCancelUpdate()">
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="max-w-screen-xl mx-auto mt-12 px-4 text-gray-600 md:px-8">
+      <div class="flex items-center justify-between text-sm font-medium">
+        <a href="#" class="px-4 py-2 border rounded-lg duration-150 hover:bg-gray-50" (click)="onPreviousPage()">Previous</a>
+        <div>Page {{formGroup.get(FORM_FIELDS.pageIndex)?.value}}</div>
+        <a href="#" class="px-4 py-2 border rounded-lg duration-150 hover:bg-gray-50" (click)="onNextPage()">Next</a>
+      </div>
+    </div>
+  </div>
+</div>
