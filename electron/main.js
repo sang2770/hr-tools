@@ -8,14 +8,16 @@ const db = require("./db/database");
 const url = require("url");
 const Store = require("electron-store");
 const store = new Store();
+const { autoUpdater } = require('electron-updater');
 console.log("Main process started");
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1200,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
     },
   });
 
@@ -26,9 +28,43 @@ function createWindow() {
       slashes: true,
     })
   );
+
+  autoUpdater.checkForUpdatesAndNotify();
   // mainWindow.webContents.reloadIgnoringCache();
   // mainWindow.webContents.openDevTools();
 }
+
+autoUpdater.on('update-available', () => {
+  // show dialog
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'Update Available',
+    message: 'A new update is available. Do you want to update now?',
+    buttons: ['Yes', 'No']
+  }).then(result => {
+    if (result.response === 0) {
+      autoUpdater.downloadUpdate();
+    }
+  });
+});
+
+autoUpdater.on('update-downloaded', () => {
+  // show dialog
+  dialog.showMessageBox({
+    type: 'info',
+    title: 'Update Downloaded',
+    message: 'The update has been downloaded. Do you want to install it now?',
+    buttons: ['Yes', 'No']
+  }).then(result => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
+ipcMain.handle("open-dev-tools", () => {
+  mainWindow.webContents.openDevTools();
+});
 
 app.whenReady().then(createWindow);
 

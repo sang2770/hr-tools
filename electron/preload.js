@@ -16,4 +16,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   setKey: (key) => ipcRenderer.invoke("set-key", key),
   getKey: () => ipcRenderer.invoke("get-key"),
+
+  openDevTools: () => ipcRenderer.invoke("open-dev-tools"),
 });

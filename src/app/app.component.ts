@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -30,5 +30,15 @@ export class AppComponent implements OnInit {
   onClose() {
     this.isVisible = false;
     this.cdr.detectChanges();
+  }
+
+  // check event F12
+  @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
+    if (event.key === 'F12') {
+      this.onOpenDevTools();
+    }
+  }
+  onOpenDevTools() {
+    (window as any).electronAPI.openDevTools();
   }
 }
