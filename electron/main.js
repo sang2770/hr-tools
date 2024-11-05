@@ -9,10 +9,11 @@ const url = require("url");
 const Store = require("electron-store");
 const store = new Store();
 const { autoUpdater } = require('electron-updater');
-console.log("Main process started");
+console.log("Main process starteds");
 
+let mainWindow = null;
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 600,
     webPreferences: {
@@ -30,7 +31,7 @@ function createWindow() {
   );
 
   autoUpdater.checkForUpdatesAndNotify();
-  // mainWindow.webContents.reloadIgnoringCache();
+  mainWindow.webContents.reloadIgnoringCache();
   // mainWindow.webContents.openDevTools();
 }
 
@@ -288,6 +289,9 @@ async function onUpload(event) {
   }
 }
 
-// require("electron-reload")(__dirname, {
-//   electron: require(`${__dirname}/../node_modules/electron`),
-// });
+// only turn on when dev env
+if (process.env.ENV == 'dev'){
+  require("electron-reload")(__dirname, {
+    electron: require(`${__dirname}/../node_modules/electron`),
+  });
+}

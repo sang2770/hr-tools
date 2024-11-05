@@ -9,6 +9,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 })
 export class AppComponent implements OnInit {
   @ViewChild('loader', { static: true }) loader: ElementRef | undefined;
+  @ViewChild('animation', { static: true }) animation: ElementRef | undefined;
   isVisible: boolean = false;
   constructor(private cdr: ChangeDetectorRef) {
     
@@ -24,6 +25,19 @@ export class AppComponent implements OnInit {
         this.isVisible = false;
         this.cdr.detectChanges();
       }
+    });
+    
+    (window as any).electronAPI.receive("candidate-uploaded", (item: any) => {
+      if (!this.animation) {
+        return;
+      }
+      this.animation.nativeElement.style.display = 'block';
+      setTimeout(() => {
+        if (!this.animation) {
+          return;
+        }
+        this.animation.nativeElement.style.display = 'none';
+      }, 4000);
     });
   }
 

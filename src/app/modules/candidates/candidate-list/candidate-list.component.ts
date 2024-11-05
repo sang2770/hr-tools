@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounce, debounceTime } from 'rxjs';
@@ -32,6 +32,7 @@ interface Candidate {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CandidateListComponent implements OnInit {
+  @ViewChild('table', {static: true}) table!: ElementRef;
   readonly FORM_FIELDS = {
     keyword: 'keyword',
     sortBy: 'sortBy',
@@ -60,6 +61,7 @@ export class CandidateListComponent implements OnInit {
   formGroup: FormGroup;
   formGroupItem: FormGroup;
   formBuilder: FormBuilder;
+  isDragging: boolean = false;
   constructor(private cdr: ChangeDetectorRef) {
     this.formBuilder = inject(FormBuilder);
     this.formGroup = this.formBuilder.group({
@@ -169,5 +171,31 @@ export class CandidateListComponent implements OnInit {
 
   async uploadCandidate(): Promise<void> {
     await (window as any).electronAPI.uploadCV();
+  }
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(event: MouseEvent) {
+    if (!this.table){
+      this.isDragging = false;
+      return;
+    }
+    this.isDragging = true;
+    const scrollableElement = this.table.nativeElement;
+    
+    scrollableElement.style.cursor = 'grabbing';
+
+    const dragScroll = (moveEvent: MouseEvent) => {
+      scrollableElement.scrollLeft -= moveEvent.movementX;
+    };
+
+    const stopDrag = () => {
+      this.isDragging = false;
+      scrollableElement.style.cursor = 'grab';
+      scrollableElement.removeEventListener('mousemove', dragScroll);
+      document.removeEventListener('mouseup', stopDrag);
+    };
+
+    scrollableElement.addEventListener('mousemove', dragScroll);
+    document.addEventListener('mouseup', stopDrag);
   }
 }
