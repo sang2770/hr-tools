@@ -21,13 +21,13 @@ function createWindow() {
 
   mainWindow.loadURL(
     url.format({
-      pathname: path.join(__dirname, `/../dist/hr-tools/browser/index.html`),
+      pathname: path.join(__dirname, `dist/hr-tools/browser/index.html`),
       protocol: "file:",
       slashes: true,
     })
   );
-  mainWindow.webContents.reloadIgnoringCache();
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.reloadIgnoringCache();
+  // mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
@@ -252,6 +252,6 @@ async function onUpload(event) {
   }
 }
 
-require("electron-reload")(__dirname, {
-  electron: require(`${__dirname}/../../node_modules/electron`),
-});
+// require("electron-reload")(__dirname, {
+//   electron: require(`${__dirname}/../node_modules/electron`),
+// });

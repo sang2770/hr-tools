@@ -2,6 +2,11 @@
   "name": "hr-tools",
   "version": "0.0.0",
   "main": "electron/main.js",
+  "author": {
+    "name": "Sang nguyen",
+    "url": "https://github.com/sang2770"
+  },
+  "description": "Tool management for HR",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -9,7 +14,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "electron": "electron .",
-    "start:electron": "concurrently \"npm run watch\" \"npm run electron\""
+    "start:electron": "concurrently \"npm run watch\" \"npm run electron\"",
+    "build-prod": " electron-builder"
   },
   "private": true,
   "dependencies": {
@@ -22,13 +28,13 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@google/generative-ai": "^0.21.0",
-    "electron": "^33.0.2",
     "electron-store": "^8.2.0",
     "pdf-parse": "^1.1.1",
     "rxjs": "~7.8.0",
     "sqlite3": "^5.1.7",
     "tslib": "^2.3.0",
-    "zone.js": "~0.14.10"
+    "zone.js": "~0.14.10",
+    "electron-reload": "^2.0.0-alpha.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.2.11",
@@ -37,7 +43,7 @@
     "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.0.1",
-    "electron-reload": "^2.0.0-alpha.1",
+    "electron-builder": "^25.1.8",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
@@ -46,6 +52,29 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "electron": "^33.0.2",
     "typescript": "~5.5.2"
+  },
+  "build": {
+    "appId": "com.sang.nv.hrtools",
+    "productName": "HR Tools", 
+    "icon": "public/icon.png",
+    "directories": {
+      "output": "release",              
+      "buildResources": "public"      
+    },
+    "win": {
+      "target": "nsis",                 
+      "icon": "public/icon.png"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "public/icon.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "public/icon.png"
+    }
   }
+  
 }
