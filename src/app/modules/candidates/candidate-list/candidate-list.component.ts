@@ -1,8 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, HostListener, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounce, debounceTime } from 'rxjs';
 import { LoadingService } from '../../../shared/loading.service';
+import { TableToExcel } from '../../../shared/lib/tableToExcel';
 interface Candidate {
   id: string;
   full_name: string;
@@ -30,10 +41,10 @@ interface Candidate {
   selector: 'app-candidate-list',
   templateUrl: './candidate-list.component.html',
   styleUrl: './candidate-list.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CandidateListComponent implements OnInit {
-  @ViewChild('table', {static: true}) table!: ElementRef;
+  @ViewChild('table', { static: true }) table!: ElementRef;
   readonly FORM_FIELDS = {
     keyword: 'keyword',
     sortBy: 'sortBy',
@@ -56,19 +67,23 @@ export class CandidateListComponent implements OnInit {
     time_probation: 'time_probation',
     date_official: 'date_official',
     note: 'note',
-  }
+  };
   candidates: Candidate[] = [];
   candidateActive: Candidate | undefined;
   formGroup: FormGroup;
   formGroupItem: FormGroup;
   formBuilder: FormBuilder;
   isDragging: boolean = false;
-  constructor(private cdr: ChangeDetectorRef, private loadingService: LoadingService) {
+  colsWidth: string = '';
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private loadingService: LoadingService
+  ) {
     this.formBuilder = inject(FormBuilder);
     this.formGroup = this.formBuilder.group({
       [this.FORM_FIELDS.keyword]: '',
       [this.FORM_FIELDS.sortBy]: '',
-      [this.FORM_FIELDS.pageIndex]: 1
+      [this.FORM_FIELDS.pageIndex]: 1,
     });
     this.formGroupItem = this.formBuilder.group({
       [this.FORM_FIELDS.full_name]: '',
@@ -89,29 +104,65 @@ export class CandidateListComponent implements OnInit {
       [this.FORM_FIELDS.time_probation]: '',
       [this.FORM_FIELDS.date_official]: '',
       [this.FORM_FIELDS.note]: '',
-    })
-    this.formGroup.valueChanges.pipe(
-      debounceTime(500),
-      takeUntilDestroyed(inject(DestroyRef))
-    ).subscribe(
-      () => {
+    });
+    this.formGroup.valueChanges
+      .pipe(debounceTime(500), takeUntilDestroyed(inject(DestroyRef)))
+      .subscribe(() => {
         this.fetchCandidates();
-      }
-    );
+      });
   }
 
   ngOnInit(): void {
-    (window as any).electronAPI.receive("candidate-uploaded", (item: any) => {
-      console.log("Candidates uploaded", item);
+    (window as any).electronAPI.receive('candidate-uploaded', (item: any) => {
+      console.log('Candidates uploaded', item);
       this.fetchCandidates();
     });
-    (window as any).electronAPI.receive("candidates-response", (item: Candidate[]) => {
-      this.candidates = item ?? [];
-      console.log("Candidates response", this.candidates);
+    (window as any).electronAPI.receive(
+      'candidates-response',
+      (item: Candidate[]) => {
+        this.candidates = item ?? [];
+        console.log('Candidates response', this.candidates);
 
-      this.cdr.detectChanges();
-    });
+        this.cdr.detectChanges();
+      }
+    );
     this.fetchCandidates();
+    this.colsWidth = [10, ...Array.from(new Array(20)).map(() => 40)].join(
+      ', '
+    );
+  }
+
+  export(): void {
+    const table =
+      document.getElementById('candidate-list') ||
+      document.createElement('div');
+    const fieldName = 'Candidate_' + Date.now().toLocaleString() + '.xlsx';
+    this.exportTableHtmlToExcel(table, fieldName, 'Sheet1', true);
+  }
+
+  exportTableHtmlToExcel(
+    table: HTMLElement,
+    fileName: string,
+    sheetName: string,
+    isHiddenLogo?: boolean
+  ): void {
+    const LOGO_ROW_EXCEL = 4;
+    const common = new TableToExcel();
+    const emptyRowTop = isHiddenLogo ? 0 : LOGO_ROW_EXCEL;
+    common.convert(table, {
+      name: fileName,
+      sheet: {
+        name: sheetName,
+      },
+      logo: isHiddenLogo
+        ? {}
+        : {
+            // logo: LOGO_BASE64,
+            // width: LOGO_W,
+            // height: LOGO_H
+          },
+      emptyRowTop,
+    });
   }
 
   fetchCandidates(): void {
@@ -130,23 +181,20 @@ export class CandidateListComponent implements OnInit {
   onDelete(candidate: Candidate): void {
     (window as any).electronAPI.deleteCandidate(candidate.id);
     this.cdr.detectChanges();
-
   }
 
-  onCancelUpdate(): void{
+  onCancelUpdate(): void {
     this.candidateActive = undefined;
     this.formGroupItem.patchValue({});
     this.cdr.detectChanges();
   }
 
-  onConfirmUpdate(): void{
-    
+  onConfirmUpdate(): void {
     (window as any).electronAPI.updateCandidate(this.formGroupItem.value);
     this.candidateActive = undefined;
     this.formGroupItem.patchValue({});
     this.loadingService.activateLoading();
     this.cdr.detectChanges();
-
   }
 
   onViewCV(candidate: Candidate): void {
@@ -157,7 +205,7 @@ export class CandidateListComponent implements OnInit {
     const pageIndex = this.formGroup.get(this.FORM_FIELDS.pageIndex)?.value;
     if (pageIndex > 1) {
       this.formGroup.patchValue({
-        [this.FORM_FIELDS.pageIndex]: pageIndex - 1
+        [this.FORM_FIELDS.pageIndex]: pageIndex - 1,
       });
       this.fetchCandidates();
     }
@@ -166,7 +214,7 @@ export class CandidateListComponent implements OnInit {
   onNextPage(): void {
     const pageIndex = this.formGroup.get(this.FORM_FIELDS.pageIndex)?.value;
     this.formGroup.patchValue({
-      [this.FORM_FIELDS.pageIndex]: pageIndex + 1
+      [this.FORM_FIELDS.pageIndex]: pageIndex + 1,
     });
     this.fetchCandidates();
   }
@@ -177,13 +225,13 @@ export class CandidateListComponent implements OnInit {
   }
 
   onMouseDown() {
-    if (!this.table){
+    if (!this.table) {
       this.isDragging = false;
       return;
     }
     this.isDragging = true;
     const scrollableElement = this.table.nativeElement;
-    
+
     scrollableElement.style.cursor = 'grabbing';
 
     const dragScroll = (moveEvent: MouseEvent) => {
