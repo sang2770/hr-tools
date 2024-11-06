@@ -1,6 +1,6 @@
 {
   "name": "hr-tools",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "electron/main.js",
   "author": {
     "name": "Sang nguyen",

@@ -40,10 +40,10 @@
         </select>
       </div>
     </form>
-    <div class="shadow-sm border rounded-lg overflow-x-auto overflow-y-auto max-h-[100vh]" #table>
+    <div class="shadow-sm border rounded-lg overflow-x-auto overflow-y-auto table-candidates" #table>
       <table class="w-full table-fixed text-sm text-left">
-        <thead class="bg-gray-50 text-gray-600 font-medium border-b sticky top-0 z-10">
-          <tr class="divide-x">
+        <thead class="bg-gray-50 text-gray-600 font-medium border-b sticky top-0 z-10" >
+          <tr class="divide-x" (mousedown)="onMouseDown()">
             <th class="text-center tracking-wider px-2 py-2 bg-gray-50 sticky left-0" style="width: 80px;">Mã Số</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Họ và Tên</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Ngày Sinh</th>
@@ -52,7 +52,7 @@
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Địa Chỉ</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Giáo Dục</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Vị Trí Ứng tuyển</th>
-            <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Kinh Nghiệm</th>
+            <th class="text-left w-[400px] max-w-400 tracking-wider px-2 py-2">Kinh Nghiệm</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Tóm Tắt</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Bộ Phận Ứng tuyển</th>
             <th class="text-left w-250 max-w-400 tracking-wider px-2 py-2">Vị trí Ứng tuyển</th>
@@ -81,18 +81,16 @@
           @for (candidate of candidates; track candidate.id; let idx = $index, e = $even) {
           @if(!candidateActive || candidate.id != candidateActive.id){
           <tr class="divide-x">
-            <td class="align-top text-center sticky left-0 bg-gray-50 px-2">{{idx}}</td>
+            <td class="align-top text-center sticky left-0 bg-gray-50 px-2">{{idx + 1}}</td>
             <td class="align-top px-2">{{candidate.full_name}}</td>
             <td class="align-top px-2">{{candidate.day_of_birth}}</td>
             <td class="align-top px-2">{{candidate.phone_number}}</td>
             <td class="align-top px-2">{{candidate.email}}</td>
             <td class="align-top px-2">{{candidate.address}}</td>
-            <td class="align-top px-2">
-              <ul class="list-disc list-inside" [innerHTML]="candidate.education"></ul>
+            <td class="align-top px-2 list-expand" [innerHTML]="candidate.education">
             </td>
             <td class="align-top px-2">{{candidate.position_candidate}}</td>
-            <td class="align-top px-2">
-              <ul class="list-disc list-inside" [innerHTML]="candidate.experience"></ul>
+            <td class="align-top px-2 list-expand" [innerHTML]="candidate.experience">
             </td>
             <td class="align-top px-2">{{candidate.summary}}</td>
             <td class="align-top px-2">{{candidate.department_apply}}</td>

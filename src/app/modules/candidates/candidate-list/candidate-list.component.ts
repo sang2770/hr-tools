@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Elem
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounce, debounceTime } from 'rxjs';
+import { LoadingService } from '../../../shared/loading.service';
 interface Candidate {
   id: string;
   full_name: string;
@@ -62,7 +63,7 @@ export class CandidateListComponent implements OnInit {
   formGroupItem: FormGroup;
   formBuilder: FormBuilder;
   isDragging: boolean = false;
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(private cdr: ChangeDetectorRef, private loadingService: LoadingService) {
     this.formBuilder = inject(FormBuilder);
     this.formGroup = this.formBuilder.group({
       [this.FORM_FIELDS.keyword]: '',
@@ -143,6 +144,7 @@ export class CandidateListComponent implements OnInit {
     (window as any).electronAPI.updateCandidate(this.formGroupItem.value);
     this.candidateActive = undefined;
     this.formGroupItem.patchValue({});
+    this.loadingService.activateLoading();
     this.cdr.detectChanges();
 
   }
@@ -170,11 +172,11 @@ export class CandidateListComponent implements OnInit {
   }
 
   async uploadCandidate(): Promise<void> {
+    this.loadingService.activateLoading();
     await (window as any).electronAPI.uploadCV();
   }
 
-  @HostListener('mousedown', ['$event'])
-  onMouseDown(event: MouseEvent) {
+  onMouseDown() {
     if (!this.table){
       this.isDragging = false;
       return;
@@ -190,7 +192,7 @@ export class CandidateListComponent implements OnInit {
 
     const stopDrag = () => {
       this.isDragging = false;
-      scrollableElement.style.cursor = 'grab';
+      scrollableElement.style.cursor = 'unset';
       scrollableElement.removeEventListener('mousemove', dragScroll);
       document.removeEventListener('mouseup', stopDrag);
     };

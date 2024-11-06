@@ -8,7 +8,8 @@ const db = require("./db/database");
 const url = require("url");
 const Store = require("electron-store");
 const store = new Store();
-const { autoUpdater } = require('electron-updater');
+const { autoUpdater } = require("electron-updater");
+const { isArray } = require("util");
 console.log("Main process starteds");
 
 let mainWindow = null;
@@ -35,32 +36,36 @@ function createWindow() {
   // mainWindow.webContents.openDevTools();
 }
 
-autoUpdater.on('update-available', () => {
+autoUpdater.on("update-available", () => {
   // show dialog
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Update Available',
-    message: 'A new update is available. Do you want to update now?',
-    buttons: ['Yes', 'No']
-  }).then(result => {
-    if (result.response === 0) {
-      autoUpdater.downloadUpdate();
-    }
-  });
+  dialog
+    .showMessageBox({
+      type: "info",
+      title: "Update Available",
+      message: "A new update is available. Do you want to update now?",
+      buttons: ["Yes", "No"],
+    })
+    .then((result) => {
+      if (result.response === 0) {
+        autoUpdater.downloadUpdate();
+      }
+    });
 });
 
-autoUpdater.on('update-downloaded', () => {
+autoUpdater.on("update-downloaded", () => {
   // show dialog
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Update Downloaded',
-    message: 'The update has been downloaded. Do you want to install it now?',
-    buttons: ['Yes', 'No']
-  }).then(result => {
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall();
-    }
-  });
+  dialog
+    .showMessageBox({
+      type: "info",
+      title: "Update Downloaded",
+      message: "The update has been downloaded. Do you want to install it now?",
+      buttons: ["Yes", "No"],
+    })
+    .then((result) => {
+      if (result.response === 0) {
+        autoUpdater.quitAndInstall();
+      }
+    });
 });
 
 ipcMain.handle("open-dev-tools", () => {
@@ -199,7 +204,9 @@ async function onUpload(event) {
       const genAI = new GoogleGenerativeAI(store.get("key"));
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt =
-        `Extract and format the following information into JSON: name, age, phone number, birthday(yyyy-mm-dd), experience (with format body: title, description, company, time), education (with format body: institution, years, major, degree),  summary from the text: ` +
+        `Extract and format the following information into JSON: name, email, age, phone number, birthday(yyyy-mm-dd), auto Calculate total working year (hight light),
+        experience (Just write down how many years you worked where or certifications if any,  then response is string html list li tag for summary),
+        education (with format body: institution, years, major, degree any then response is string html list li tag for summary), summary from the text: ` +
         data.text;
       let response;
       try {
@@ -217,6 +224,7 @@ async function onUpload(event) {
           part.text.indexOf("```", part.text.indexOf("```") + 3)
         )
         .slice(4);
+      // console.log('Candidate', text);
       const res = JSON.parse(text);
       // convert IGeminiExactFromCVResponse to Candidate
       const newCandidate = {
@@ -226,19 +234,9 @@ async function onUpload(event) {
         phone_number: res.phone_number,
         email: res.email,
         address: res.address,
-        education: res.education
-          .map(
-            (edu) =>
-              `<li>${edu.institution}, ${edu.years}, ${edu.major}, ${edu.degree}</li>`
-          )
-          .join(""),
+        education: res.education,
         position_candidate: res.position_candidate,
-        experience: res.experience
-          .map(
-            (exp) =>
-              `<li>${exp.title}, ${exp.description}, ${exp.company}, ${exp.time}</li>`
-          )
-          .join(""),
+        experience: `<strong>${res.total_working_years}</strong> ` + res.experience,
         summary: res.summary,
         department_apply: "",
         position_apply: "",
@@ -290,7 +288,7 @@ async function onUpload(event) {
 }
 
 // only turn on when dev env
-if (process.env.ENV == 'dev'){
+if (process.env.ENV == "dev") {
   require("electron-reload")(__dirname, {
     electron: require(`${__dirname}/../node_modules/electron`),
   });

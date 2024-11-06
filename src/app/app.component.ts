@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { LoadingService } from './shared/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -11,18 +11,23 @@ export class AppComponent implements OnInit {
   @ViewChild('loader', { static: true }) loader: ElementRef | undefined;
   @ViewChild('animation', { static: true }) animation: ElementRef | undefined;
   isVisible: boolean = false;
-  constructor(private cdr: ChangeDetectorRef) {
+  isRequiredKey: boolean = false;
+  constructor(private cdr: ChangeDetectorRef, public loadingService: LoadingService) {
     
   }
   ngOnInit(): void {
+    this.loadingService.isLoading$.subscribe(isLoading => {
+      this.isVisible = isLoading;
+      this.cdr.detectChanges();
+    });
     (window as any).electronAPI.getKey();
     (window as any).electronAPI.receive("key-response", (item: any) => {
       console.log("Key response", item);
       if (!item) {
-        this.isVisible = true;
+        this.isRequiredKey = true;
         this.cdr.detectChanges();
       }else{
-        this.isVisible = false;
+        this.isRequiredKey = false;
         this.cdr.detectChanges();
       }
     });
@@ -38,11 +43,12 @@ export class AppComponent implements OnInit {
         }
         this.animation.nativeElement.style.display = 'none';
       }, 4000);
+      this.loadingService.deactivateLoading();
     });
   }
 
   onClose() {
-    this.isVisible = false;
+    this.isRequiredKey = false;
     this.cdr.detectChanges();
   }
 

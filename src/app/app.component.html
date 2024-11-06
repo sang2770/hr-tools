@@ -1,7 +1,7 @@
 <div class="container-loader" #loader *ngIf="isVisible">
     <span class="loader"></span>
-    <app-settings (close)="onClose()" />
 </div>
+<app-settings (close)="onClose()" *ngIf="isRequiredKey"/>
 
 <router-outlet></router-outlet>
 
