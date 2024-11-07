@@ -67,6 +67,7 @@ export class CandidateListComponent implements OnInit {
     time_probation: 'time_probation',
     date_official: 'date_official',
     note: 'note',
+    pageSize: 'pageSize',
   };
   candidates: Candidate[] = [];
   candidateActive: Candidate | undefined;
@@ -86,6 +87,7 @@ export class CandidateListComponent implements OnInit {
       [this.FORM_FIELDS.keyword]: '',
       [this.FORM_FIELDS.sortBy]: '',
       [this.FORM_FIELDS.pageIndex]: 1,
+      [this.FORM_FIELDS.pageSize]: 30,
     });
     this.formGroupItem = this.formBuilder.group({
       [this.FORM_FIELDS.full_name]: '',
@@ -169,7 +171,8 @@ export class CandidateListComponent implements OnInit {
     const keyword = this.formGroup.get(this.FORM_FIELDS.keyword)?.value;
     const sortBy = this.formGroup.get(this.FORM_FIELDS.sortBy)?.value;
     const pageIndex = this.formGroup.get(this.FORM_FIELDS.pageIndex)?.value;
-    (window as any).electronAPI.loadCandidates(keyword, sortBy, pageIndex);
+    const pageSize = this.formGroup.get(this.FORM_FIELDS.pageSize)?.value;
+    (window as any).electronAPI.loadCandidates({keyword, sortBy, pageIndex, pageSize});
   }
 
   onUpdate(candidate: Candidate): void {

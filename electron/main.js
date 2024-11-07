@@ -93,7 +93,7 @@ ipcMain.handle("get-key", (event, key) => {
   event.sender.send("key-response", store.get("key"));
 });
 
-ipcMain.handle("load-candidates", (event, keyword, sortBy, pageIndex) => {
+ipcMain.handle("load-candidates", (event, { keyword, sortBy, pageIndex, pageSize}) => {
   console.log("Loading candidates", keyword, sortBy, pageIndex);
   const keywordFormat = `%${keyword}%`;
   db.all(
@@ -103,8 +103,8 @@ ipcMain.handle("load-candidates", (event, keyword, sortBy, pageIndex) => {
       keywordFormat,
       keywordFormat,
       sortBy ?? "lastModified",
-      30,
-      (pageIndex - 1) * 30,
+      pageSize,
+      (pageIndex - 1) * pageSize,
     ],
     (err, rows) => {
       if (err) {
