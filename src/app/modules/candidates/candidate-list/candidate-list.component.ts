@@ -74,7 +74,9 @@ export class CandidateListComponent implements OnInit {
   formGroupItem: FormGroup;
   formBuilder: FormBuilder;
   isDragging: boolean = false;
-  colsWidth: string = '';
+  colsWidth: string = [10, ...Array.from(new Array(20)).map(() => 40)].join(
+    ', '
+  );
   constructor(
     private cdr: ChangeDetectorRef,
     private loadingService: LoadingService
@@ -127,15 +129,13 @@ export class CandidateListComponent implements OnInit {
       }
     );
     this.fetchCandidates();
-    this.colsWidth = [10, ...Array.from(new Array(20)).map(() => 40)].join(
-      ', '
-    );
   }
 
   export(): void {
     const table =
       document.getElementById('candidate-list') ||
       document.createElement('div');
+    
     const fieldName = 'Candidate_' + Date.now().toLocaleString() + '.xlsx';
     this.exportTableHtmlToExcel(table, fieldName, 'Sheet1', true);
   }

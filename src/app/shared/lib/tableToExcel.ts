@@ -1,6 +1,7 @@
 import {Workbook} from 'exceljs';
 import {saveAs} from 'file-saver';
-const Parser = require('./parser');
+//@ts-ignore
+import  Parser from './parser';
 export interface IOptionExcel{
   name?: string ;
   autoStyle?: boolean;
@@ -44,7 +45,8 @@ export class TableToExcel {
 
   tableToSheet = (wb: any, table: any, opts: IOptionExcel) => {
     let ws = this.initSheet(wb, opts?.sheet?.name || '');
-    ws = Parser.parseDomToTable(ws, table, opts);
+    // @ts-ignore
+    ws = (Parser as any).parseDomToTable(ws, table, opts);
     if (!! opts.logo?.logo){
       const imageId = wb.addImage({
         base64: opts.logo.logo,

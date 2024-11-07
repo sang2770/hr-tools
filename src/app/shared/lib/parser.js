@@ -10,6 +10,7 @@ const TTEParser = (function () {
     let _r, _c, cs, rs, r, c;
     let rows = [...table.getElementsByTagName("tr")];
     let widths = table.getAttribute("data-cols-width");
+    console.log("Table widths", widths);
     const styleTable = getStylesDataAttr(table);
     if (widths)
       widths = widths.split(",").map(function (item) {
