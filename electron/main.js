@@ -103,8 +103,8 @@ ipcMain.handle("load-candidates", (event, { keyword, sortBy, pageIndex, pageSize
       keywordFormat,
       keywordFormat,
       sortBy ?? "lastModified",
-      pageSize,
-      (pageIndex - 1) * pageSize,
+      pageSize ?? 30,
+      (pageIndex - 1) * (pageSize ?? 30),
     ],
     (err, rows) => {
       if (err) {
