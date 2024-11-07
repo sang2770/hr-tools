@@ -20,7 +20,7 @@ jobs:
           node-version: '18.20.4'
 
       - name: Clean cache
-        run: rm -rf node_modules package-lock.json
+        run: rm -rf node_modules package-lock.json release
 
       - name: Install dependencies
         run: npm install
