@@ -15,7 +15,8 @@
     "test": "ng test",
     "electron": "electron .",
     "start:electron-dev": "cross-env ENV=dev concurrently \"npm run watch\" \"npm run electron\"",
-    "build-prod": " electron-builder --publish=always"
+    "build-prod": " electron-builder --publish=always",
+    "electron-build": " electron-builder"
   },
   "private": true,
   "dependencies": {
