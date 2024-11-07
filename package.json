@@ -16,7 +16,7 @@
     "electron": "electron .",
     "start:electron-dev": "cross-env ENV=dev concurrently \"npm run watch\" \"npm run electron\"",
     "build-prod": " electron-builder --publish=always",
-    "electron-build": " electron-builder --publish=never"
+    "electron-build": " electron-builder --windows --linux --mac --publish=never"
   },
   "private": true,
   "dependencies": {
