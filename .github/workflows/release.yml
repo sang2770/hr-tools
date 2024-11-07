@@ -4,7 +4,9 @@ on:
   push:
     tags:
       - 'v*'   # Kích hoạt workflow khi có push tag bắt đầu với chữ 'v', ví dụ: v1.0.0
-
+permissions:
+  contents: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
