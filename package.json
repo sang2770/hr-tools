@@ -4,7 +4,8 @@
   "main": "electron/main.js",
   "author": {
     "name": "Sang nguyen",
-    "url": "https://github.com/sang2770"
+    "url": "https://github.com/sang2770",
+    "email": "nguyenvansang30102001@gmail.com"
   },
   "description": "Tool management for HR",
   "scripts": {
@@ -88,7 +89,8 @@
       "target": "dmg"
     },
     "linux": {
-      "target": "deb"
+      "target": "deb",
+      "maintainer": "Sang Nguyen"
     }
   }
 }
