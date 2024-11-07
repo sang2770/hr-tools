@@ -34,6 +34,9 @@ jobs:
       - name: Package Electron app
         run: npm run electron-build
 
+      - name: List files in release directory
+        run: ls -la release
+
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         with:
