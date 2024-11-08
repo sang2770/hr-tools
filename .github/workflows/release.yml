@@ -22,15 +22,27 @@ jobs:
       - name: Clean cache
         run: rm -rf node_modules package-lock.json release
 
-      - name: Install Wine for Electron Builder
+      # Install Wine for Electron Builder if not installed
+      - name: Install Wine for Electron Builder (if not installed)
         run: |
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install -y wine64 wine32
-      
-      - name: Install additional libraries
+          if ! command -v wine64 &> /dev/null; then
+            echo "Wine not found, installing..."
+            sudo dpkg --add-architecture i386
+            sudo apt update
+            sudo apt install -y wine64 wine32
+          else
+            echo "Wine is already installed."
+          fi
+
+      # Install additional libraries if not installed
+      - name: Install additional libraries (if not installed)
         run: |
-          sudo apt install -y xvfb g++-multilib gcc-multilib
+          if ! dpkg -l | grep -q xvfb; then
+            echo "xvfb not found, installing..."
+            sudo apt install -y xvfb g++-multilib gcc-multilib
+          else
+            echo "xvfb is already installed."
+          fi
 
       - name: Install dependencies
         run: npm install
