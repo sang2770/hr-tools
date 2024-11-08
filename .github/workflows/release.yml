@@ -1,69 +1,69 @@
-name: Build and Release Electron App
+# name: Build and Release Electron App
 
-on:
-  push:
-    tags:
-      - 'v*'   # Kích hoạt workflow khi có push tag bắt đầu với chữ 'v', ví dụ: v1.0.0
-permissions:
-  contents: write
+# on:
+#   push:
+#     tags:
+#       - 'v*'   # Kích hoạt workflow khi có push tag bắt đầu với chữ 'v', ví dụ: v1.0.0
+# permissions:
+#   contents: write
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.20.4'
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '18.20.4'
 
-      - name: Clean cache
-        run: rm -rf node_modules package-lock.json release
+#       - name: Clean cache
+#         run: rm -rf node_modules package-lock.json release
 
-      # Install Wine for Electron Builder if not installed
-      - name: Install Wine for Electron Builder (if not installed)
-        run: |
-          if ! command -v wine64 &> /dev/null; then
-            echo "Wine not found, installing..."
-            sudo dpkg --add-architecture i386
-            sudo apt update
-            sudo apt install -y wine64 wine32
-          else
-            echo "Wine is already installed."
-          fi
+#       # Install Wine for Electron Builder if not installed
+#       - name: Install Wine for Electron Builder (if not installed)
+#         run: |
+#           if ! command -v wine64 &> /dev/null; then
+#             echo "Wine not found, installing..."
+#             sudo dpkg --add-architecture i386
+#             sudo apt update
+#             sudo apt install -y wine64 wine32
+#           else
+#             echo "Wine is already installed."
+#           fi
 
-      # Install additional libraries if not installed
-      - name: Install additional libraries (if not installed)
-        run: |
-          if ! dpkg -l | grep -q xvfb; then
-            echo "xvfb not found, installing..."
-            sudo apt install -y xvfb g++-multilib gcc-multilib
-          else
-            echo "xvfb is already installed."
-          fi
+#       # Install additional libraries if not installed
+#       - name: Install additional libraries (if not installed)
+#         run: |
+#           if ! dpkg -l | grep -q xvfb; then
+#             echo "xvfb not found, installing..."
+#             sudo apt install -y xvfb g++-multilib gcc-multilib
+#           else
+#             echo "xvfb is already installed."
+#           fi
 
-      - name: Install dependencies
-        run: npm install
+#       - name: Install dependencies
+#         run: npm install
 
-      - name: Build Electron app
-        run: npm run build
+#       - name: Build Electron app
+#         run: npm run build
 
-      - name: Package Electron app
-        run: npm run electron-build
+#       - name: Package Electron app
+#         run: npm run electron-build
 
-      - name: List files in release directory
-        run: ls -la release
+#       - name: List files in release directory
+#         run: ls -la release
 
-      - name: Upload Release Assets
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            release/*.exe
-            release/*.deb
-            release/*.yml
-            release/*.AppImage
+#       - name: Upload Release Assets
+#         uses: softprops/action-gh-release@v1
+#         with:
+#           files: |
+#             release/*.exe
+#             release/*.deb
+#             release/*.yml
+#             release/*.AppImage
 
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

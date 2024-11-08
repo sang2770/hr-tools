@@ -1,6 +1,6 @@
 {
   "name": "hr-tools",
-  "version": "0.0.9",
+  "version": "0.0.7",
   "main": "electron/main.js",
   "author": {
     "name": "Sang nguyen",
@@ -16,7 +16,7 @@
     "test": "ng test",
     "electron": "electron .",
     "start:electron-dev": "cross-env ENV=dev concurrently \"npm run watch\" \"npm run electron\"",
-    "build-prod": " electron-builder --publish=always",
+    "build-prod": "electron-builder --publish=always",
     "electron-build": " electron-builder --win --linux --publish=never"
   },
   "private": true,

@@ -46,7 +46,11 @@ autoUpdater.on("update-available", () => {
     })
     .then((result) => {
       if (result.response === 0) {
-        autoUpdater.downloadUpdate();
+        try {
+          autoUpdater.downloadUpdate();
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
 });
